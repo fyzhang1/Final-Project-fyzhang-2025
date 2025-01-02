@@ -12,7 +12,33 @@ python sin_main.py
 python LV-main.py
 ```
 
+## Dynamic System: SIR
+
+```python
+python SIR-main.py
+```
+
+## Dynamic System: FHN
+
+```python
+python FHN_main.py
+```
+
 change the model_name in main file to run the different training model
+
+## Running the Neural-ODE
+
+In the FHN dynamical system
+
+```python
+python FHN_neuralode.py
+```
+
+In the SIR dynamical system
+
+```python
+python SIR_neural_ode.py
+```
 
 ## Final_transformer_LV_Train
 1. Using the LV dynamic system model to generate data;
