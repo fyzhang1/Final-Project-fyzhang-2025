@@ -58,3 +58,73 @@ def generate_lv_data(alpha, beta, delta, gamma, x0, y0, tmax, Nt, seq_length, pr
     
     return np.array(x_data), np.array(y_data), t
 
+
+# Define the SIR derivatives
+def sir_derivative(X, t):
+    S, I, R = X
+    dotS = -beta * S * I / N
+    dotI = beta * S * I / N - gamma * I
+    dotR = gamma * I
+    return np.array([dotS, dotI, dotR])
+
+# Generate SIR data
+def generate_sir_data(S0, I0, R0, tmax, Nt, seq_length, pred_length):
+    t = np.linspace(0, tmax, Nt + 1)
+    X0 = [S0, I0, R0]
+    res = odeint(sir_derivative, X0, t)
+    S, I, R = res.T
+
+    data = np.stack([S, I, R], axis=1)
+    
+    # Normalize data
+    data_min = data.min(axis=0)
+    data_max = data.max(axis=0)
+    data = (data - data_min) / (data_max - data_min)
+
+    x_data, y_data = [], []
+
+    for i in range(len(data) - seq_length - pred_length):
+        x_data.append(data[i : i + seq_length])
+        y_data.append(data[i + seq_length : i + seq_length + pred_length])
+
+    return np.array(x_data), np.array(y_data), t, data_min, data_max
+
+
+
+# SIR model parameters
+N = 350  # Total number of individuals
+I0, R0 = 1., 0  # Initial number of infected and recovered individuals
+S0 = N - I0 - R0  # Initial number of susceptible individuals
+beta, gamma = 0.4, 0.1  # Contact rate and mean recovery rate
+
+# Define the SIR derivatives
+def sir_derivative(X, t):
+    S, I, R = X
+    dotS = -beta * S * I / N
+    dotI = beta * S * I / N - gamma * I
+    dotR = gamma * I
+    return np.array([dotS, dotI, dotR])
+
+# Generate SIR data
+def generate_sir_data(S0, I0, R0, tmax, Nt, seq_length, pred_length):
+    t = np.linspace(0, tmax, Nt + 1)
+    X0 = [S0, I0, R0]
+    res = odeint(sir_derivative, X0, t)
+    S, I, R = res.T
+
+    data = np.stack([S, I, R], axis=1)
+    
+    # Normalize data
+    data_min = data.min(axis=0)
+    data_max = data.max(axis=0)
+    data = (data - data_min) / (data_max - data_min)
+
+    x_data, y_data = [], []
+
+    for i in range(len(data) - seq_length - pred_length):
+        x_data.append(data[i : i + seq_length])
+        y_data.append(data[i + seq_length : i + seq_length + pred_length])
+
+    return np.array(x_data), np.array(y_data), t, data_min, data_max
+
+
